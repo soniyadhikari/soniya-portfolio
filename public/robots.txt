@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://soniyaadhikari.com.np/sitemap.xml

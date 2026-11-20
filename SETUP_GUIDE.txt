@@ -1,0 +1,321 @@
+SONIYA ADHIKARI PORTFOLIO - SETUP AND CONTENT GUIDE
+===================================================
+
+This guide explains how to update the portfolio, preview it, and publish it.
+The website uses React and Vite. Content is kept in src\data\ and the site is
+built as static pages for Vercel, with one optional Vercel API function for
+the profile-view counter.
+
+
+1. OPEN AND RUN THE PROJECT
+---------------------------
+
+Requirements:
+- Windows 10 or later
+- Visual Studio Code
+- Node.js LTS (npm is included)
+- Git, if you want to publish changes through GitHub
+
+Open C:\Users\DELL\my-app in VS Code. In the VS Code terminal, run:
+
+    npm install
+    npm run dev
+
+Open the localhost URL printed by Vite (usually http://localhost:5173).
+Stop the server with Ctrl+C. To check a production build locally, run:
+
+    npm run lint
+    npm run build
+    npm run preview
+
+Open the preview URL printed by Vite. Build output is in dist\. Do not edit
+dist\ directly; it is regenerated from src\ and public\.
+
+
+2. WHERE TO EDIT PORTFOLIO CONTENT
+----------------------------------
+
+Edit these files under src\data\:
+
+    personal.js    Name, headline, introduction, About text, roles, email,
+                   social links, CV path, and learning goals.
+    projects.js    Curated project cards and project detail-page content.
+    skills.js      Skill categories, skill names, and proficiency label.
+    education.js   Education, leadership, events, and leadership achievements.
+    journey.js     Timeline milestones.
+    research.js    Research interests, experiments, reading, and publications.
+    experience.js  Reserved for future experience entries.
+
+The site currently displays personal, project, skill, education/leadership,
+and journey data. Research is intentionally hidden. There is no Experience
+section yet, so entries in experience.js are saved content only and will not
+appear on the website until a section is implemented. Do not add information
+that is not accurate and verified.
+
+
+3. UPDATE PERSONAL INFORMATION AND LINKS
+-----------------------------------------
+
+1. Open src\data\personal.js.
+2. Update name, initials, headline, introduction, roles, About text, and goals
+   with information you want to publish.
+3. Update email and the GitHub, LinkedIn, Facebook, or Instagram URLs. Set a
+   link to an empty string ('') to hide that social link.
+4. Update website if the public domain changes. The website value is used for
+   canonical and social metadata at build time.
+5. Keep cvPath matched to the PDF path in public\ (see section 8).
+6. Save and run npm run build to check your changes.
+
+The main page title and SEO description are generated from personal.js.
+Project page titles and descriptions are generated from projects.js.
+
+
+4. ADD, EDIT, OR REMOVE A PROJECT
+---------------------------------
+
+Open src\data\projects.js. The Projects section displays this array in its
+current order. It does not fetch projects from GitHub. Adding an entry makes
+a card automatically and creates its project detail page during the build.
+
+Add a new object inside the projects array, separated from neighboring
+objects by a comma. Example:
+
+    {
+      slug: 'sample-project',
+      title: 'Sample Project',
+      description: 'A short, accurate summary of the project.',
+      technologies: ['Python', 'React'],
+      status: 'In Progress',
+      featured: false,
+      github: 'https://github.com/YOUR_USERNAME/YOUR_REPOSITORY',
+      demo: '',
+      overview: 'Explain the project goal here.',
+    },
+
+Use your real details; replace the example values. Required fields are:
+- slug: unique lowercase URL name with hyphens, such as sample-project.
+- title: project name.
+- description: short summary shown on the card and detail page.
+- technologies: array of technology names.
+- status: short label, such as Completed or In Progress.
+
+Optional fields include github, demo, featured, overview, problem, motivation,
+solution, implementation, challenges, results, future, and architecture.
+Leave an optional value empty or omit it if you have nothing accurate to add.
+The featured field displays a label; projects remain in array order.
+
+To edit a project, update its object in projects.js. To remove one, delete its
+whole object from the projects array. Keep commas between remaining objects
+and make sure every slug is unique.
+
+For search engines, add a new public project URL to public\sitemap.xml. The
+Vercel project route is already configured for any project slug. After
+editing, run npm run lint and npm run build, then check:
+
+    http://localhost:4173/projects/sample-project
+
+The URL above is for npm run preview; use the actual preview port if Vite
+prints a different one. Unknown slugs should show the not-found page.
+
+
+5. ADD OR REMOVE TECHNICAL SKILLS
+---------------------------------
+
+Open src\data\skills.js. Add a skill name to the skills array for the matching
+category. Example:
+
+    { title: 'Programming', skills: ['Python', 'C', 'TypeScript'] },
+
+Remove a skill by deleting its name from the array. To add a category, add an
+object with a title and skills array. Non-empty categories appear in the
+Skills section automatically. The proficiency label currently applies to all
+categories; edit proficiency in the same file if that label should change.
+
+
+6. UPDATE EDUCATION, LEADERSHIP, JOURNEY, RESEARCH, AND ACHIEVEMENTS
+--------------------------------------------------------------------
+
+- Education and leadership: edit the matching fields in
+  src\data\education.js. Optional fields can be left empty or removed; an
+  empty education or leadership card is not displayed.
+- Achievements and activities: update the verified leadership achievements,
+  events, and year in education.js. Add learning or career milestones to
+  src\data\journey.js.
+- Journey: add or remove objects in the journey array. Each object has a
+  title and description and appears as a timeline item.
+- Research: update the fields in src\data\research.js. The Research section is
+  intentionally not shown on the current site, so these changes are stored
+  but not displayed.
+- Experience: src\data\experience.js is reserved for future entries. There
+  is no Experience section in the current design; adding content to this file
+  alone will not display it.
+
+
+7. REPLACE THE CV
+-----------------
+
+Replace public\soniya-cv.pdf with your current PDF and keep that filename.
+Alternatively, give the new PDF a different filename and update cvPath in
+src\data\personal.js to the matching public path (for example
+'/my-cv.pdf'). Confirm that the PDF opens from the local preview and that
+the Download CV buttons download it. Do not publish a CV until you have
+checked its contents.
+
+
+8. PROFILE AND PROJECT IMAGES
+-----------------------------
+
+The current hero illustration is drawn with CSS. There is no profile portrait
+or project-card image wired into the site, and projects.js has no image field.
+The public\images\ folder is available for future assets, but adding an image
+there alone will not display it. Showing a portrait or project image would
+also require a layout/component change; this guide does not add that feature.
+
+The existing public\social-card.png is used for link previews on social media.
+Replace it only with an image you want used as the website's share preview.
+
+
+9. CONTACT FORM AND PROFILE-VIEW COUNTER
+----------------------------------------
+
+Contact form:
+- The form uses Formspree when VITE_FORMSPREE_ENDPOINT is configured.
+- The current public endpoint value is in .env.example. It is not a password.
+- For local development, copy .env.example to .env.local, then restart Vite:
+
+      Copy-Item .env.example .env.local
+
+- To change the destination, create or configure a form in Formspree and put
+  its endpoint in .env.local for local testing.
+- The form also accepts VITE_WEB3FORMS_ACCESS_KEY if you choose Web3Forms
+  instead. This is a public browser key, not a private secret. If both
+  providers are configured, Formspree is used.
+- In Vercel, set VITE_FORMSPREE_ENDPOINT under Project Settings >
+  Environment Variables, then redeploy. Vercel does not read .env.local.
+- For Web3Forms, set VITE_WEB3FORMS_ACCESS_KEY in the same local or Vercel
+  environment instead of the Formspree endpoint.
+- The website displays an error if sending fails and keeps an email link as a
+  fallback. Test a real submission after deployment.
+
+Profile-view counter:
+- The counter uses the Vercel function in api\profile-views.js and Upstash
+  Redis. It is not available in the regular Vite development server.
+- To enable it in production, connect an Upstash Redis database through the
+  Vercel Marketplace and add UPSTASH_REDIS_REST_URL and
+  UPSTASH_REDIS_REST_TOKEN as server-side Vercel environment variables.
+- Never prefix these server secrets with VITE_ and never commit them.
+- Until configured, the counter can show an unavailable state. This does not
+  prevent the static portfolio from building or deploying.
+
+The .gitignore file excludes .env.local, other local environment files,
+node_modules, dist, and Vercel's local .vercel directory. Only .env.example
+is intended to be committed. Values beginning with VITE_ are public in the
+browser bundle; never put passwords or private server keys in them.
+
+
+10. CHECK THE SITE BEFORE PUBLISHING
+------------------------------------
+
+From the project folder run:
+
+    npm run lint
+    npm run build
+    npm run preview
+
+Before deploying, check the home page at mobile, tablet, and desktop sizes;
+click the navigation links and theme toggle; open each project card and
+project detail URL; check the CV download; and test the contact form on the
+deployed site. A real contact submission cannot be confirmed by a local build
+alone.
+
+
+11. PUSH THE PROJECT TO GITHUB SAFELY
+-------------------------------------
+
+Important: before using Git, run:
+
+    git rev-parse --show-toplevel
+
+The output must be the portfolio project folder
+C:\Users\DELL\my-app. If it prints a parent folder such as C:\Users\DELL,
+stop. Do not run git add, commit, or push from that parent; it may include
+unrelated personal files. Create or select an isolated GitHub repository
+containing only this portfolio. Never publish your whole Windows user folder.
+
+If you are setting up an isolated repository for the first time, open a
+terminal in C:\Users\DELL\my-app, initialize Git there, and connect only the
+new portfolio repository:
+
+    git init
+    git branch -M main
+    git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+
+Before committing, confirm the repository root again and inspect:
+
+    git rev-parse --show-toplevel
+    git status --short
+
+Make sure .env.local, .vercel, node_modules, and dist are not listed for
+commit. Then add, commit, and push the portfolio files:
+
+    git add .
+    git commit -m "Update portfolio"
+    git push -u origin main
+
+Replace the example GitHub URL with the correct repository. If a remote named
+origin already exists, inspect it with git remote -v instead of adding a
+second one. Do not push until the repository root and staged file list are
+correct.
+
+
+12. DEPLOY TO VERCEL
+--------------------
+
+1. Sign in to Vercel and select Add New > Project.
+2. Import the isolated portfolio repository from GitHub.
+3. Use these Vite settings if Vercel does not detect them automatically:
+
+       Build command:     npm run build
+       Output directory:  dist
+       Install command:   npm install
+
+4. Add VITE_FORMSPREE_ENDPOINT if the contact form should send messages.
+5. Add the two Upstash server variables only if enabling the profile counter.
+6. Deploy, open the Vercel URL, and test the home page, project pages,
+   download, and contact form.
+
+vercel.json serves generated project detail pages on direct visits and
+refreshes, including newly added slugs. The build generates the static
+metadata pages from src\data\projects.js. Update public\sitemap.xml whenever
+you add or remove a project or change the public domain.
+
+To use the custom domain, add soniyaadhikari.com.np under Vercel project
+Settings > Domains and configure exactly the DNS records Vercel provides at
+the domain registrar. Update personal.website, public\robots.txt, and
+public\sitemap.xml if the domain changes.
+
+
+13. COMMON ISSUES
+-----------------
+
+`npm` is not recognized:
+    Install Node.js LTS, restart VS Code, and try again.
+
+A project URL returns not found:
+    Confirm the project slug matches projects.js and the project built
+    successfully. Check the Vercel deployment includes the current vercel.json.
+
+The CV button does not download the right file:
+    Check that the PDF exists under public\ and that cvPath in personal.js
+    matches its filename.
+
+The contact form says it is not connected:
+    Configure VITE_FORMSPREE_ENDPOINT locally and in Vercel as described
+    above. Do not put private credentials in a VITE_ variable.
+
+The profile counter is unavailable:
+    Configure both Upstash server variables in Vercel and redeploy. The
+    Vite development server does not run Vercel API functions.
+
+
+END OF GUIDE
